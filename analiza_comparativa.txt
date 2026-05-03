@@ -1,0 +1,21 @@
+ANALIZA COMPARATIVA: ALGORITMUL LUI KRUSKAL VS. ALGORITMUL LUI PRIM
+
+1. Asemanari:
+- Ambii algoritmi sunt de tip "Greedy" (tehnica optimului local).
+- Ambii garanteaza gasirea unui Arbore Minim de Acoperire (MST) intr-un graf conex.
+- Rezultatul final (costul total) este identic pentru ambele metode daca graful este acelasi.
+
+2. Diferente:
+- Mod de operare: Kruskal selecteaza muchiile in ordinea crescatoare a costului, pe cand Prim porneste dintr-un nod si "creste" arborele adaugand cel mai apropiat nod nevizitat.
+- Structura intermediara: Kruskal lucreaza cu o padure de arbori care se unesc treptat. Prim lucreaza cu un singur arbore care se extinde la fiecare pas.
+
+3. Beneficii:
+- Kruskal: Este foarte eficient pentru grafuri rare (sparse), unde numarul de muchii este apropiat de numarul de noduri. Este usor de implementat folosind structura de date Union-Find.
+- Prim: Este mai eficient pentru grafuri dense, unde numarul de muchii este mare (apropiat de V^2). Folosind un heap Fibonacci, poate atinge o complexitate superioara.
+
+4. Problematici:
+- Kruskal: Necesita sortarea tuturor muchiilor la inceput, ceea ce poate fi costisitor (O(E log E)).
+- Prim: Necesita gestionarea constanta a distantelor nodurilor fata de arborele curent, necesitand structuri de date suplimentare (Priority Queues) pentru eficienta optima.
+
+5. Concluzie:
+Alegerea depinde de densitatea grafului. Pentru tema de fata (graf rar cu 15 noduri si 18 muchii), Kruskal este foarte intuitiv, dar ambele metode produc rezultate corecte rapid.
