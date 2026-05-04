@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #define MAX_NODES 100
 #define MAX_EDGES 500
 
@@ -13,6 +12,28 @@ typedef struct {
     int parent;
     int rank;
 } Subset;
+
+// --- FUNCTIE NOUA ---
+int numaraAfiseazaNoduri(Edge edges[], int E) {
+    int prezent[MAX_NODES] = {0};
+
+    for (int i = 0; i < E; i++) {
+        prezent[edges[i].u] = 1;
+        prezent[edges[i].v] = 1;
+    }
+
+    int count = 0;
+    printf("\n--- Noduri detectate (hex) ---\n");
+    for (int i = 0; i < MAX_NODES; i++) {
+        if (prezent[i]) {
+            printf("Nod %d -> 0x%X\n", i, i);
+            count++;
+        }
+    }
+    printf("Total noduri: %d (0x%X)\n", count, count);
+    return count;
+}
+// --- SFARSIT FUNCTIE NOUA ---
 
 int find(Subset subsets[], int i) {
     if (subsets[i].parent != i)
@@ -106,7 +127,7 @@ int main() {
     char line[100];
     Edge edges[MAX_EDGES];
     int adj[MAX_NODES][MAX_NODES] = {0};
-    int E = 0, V = 15;
+    int E = 0;
     fgets(line, 100, file);
     while (fgets(line, 100, file)) {
         sscanf(line, "%d,%d,%d", &edges[E].u, &edges[E].v, &edges[E].w);
@@ -115,6 +136,10 @@ int main() {
         E++;
     }
     fclose(file);
+
+    // V acum vine din numararea efectiva a nodurilor
+    int V = numaraAfiseazaNoduri(edges, E);
+
     runKruskal(V, E, edges);
     runPrim(V, adj);
     return 0;
