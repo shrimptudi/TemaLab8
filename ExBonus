@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+
+#define V 8 // Avem 8 orase in total pe harta
+
+// Mapam indexul fiecarui nod la numele orasului
+const char* orase[] = {
+    "Timisoara",    // 0
+    "Cluj-Napoca",  // 1
+    "Sibiu",        // 2
+    "Craiova",      // 3
+    "Bucuresti",    // 4
+    "Brasov",       // 5
+    "Iasi",         // 6
+    "Constanta"     // 7
+};
+
+// Gaseste nodul cu distanta minima dintre cele neexplorate
+int minDistance(int dist[], bool sptSet[]) {
+    int min = INT_MAX, min_index = -1;
+    
+    for (int v = 0; v < V; v++)
+        if (sptSet[v] == false && dist[v] <= min) {
+            min = dist[v];
+            min_index = v;
+        }
+        
+    return min_index;
+}
+
+// Functie recursiva pentru a afisa ruta folosind vectorul de parinti
+void printPath(int parent[], int j) {
+    // Daca am ajuns la sursa, ne oprim
+    if (parent[j] == -1)
+        return;
+        
+    printPath(parent, parent[j]);
+    printf(" -> %s", orase[j]);
+}
+
+// Algoritmul Dijkstra pentru a gasi drumul de la src la dest
+void dijkstra(int graph[V][V], int src, int dest) {
+    int dist[V];      // Retine cea mai scurta distanta posibila
+    bool sptSet[V];   // Marcheaza nodurile deja explorate
+    int parent[V];    // Retine traseul pentru a putea reconstrui ruta la final
+
+    // Initializari
+    for (int i = 0; i < V; i++) {
+        parent[i] = -1;
+        dist[i] = INT_MAX;
+        sptSet[i] = false;
+    }
+
+    dist[src] = 0;
+
+    // Cautam cel mai scurt drum
+    for (int count = 0; count < V - 1; count++) {
+        int u = minDistance(dist, sptSet);
+        sptSet[u] = true; // Marcam nodul ca explorat
+
+        // Actualizam distantele pentru vecinii nodului u
+        for (int v = 0; v < V; v++) {
+            if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX 
+                && dist[u] + graph[u][v] < dist[v]) {
+                parent[v] = u; // Salvam muchia folosita pentru traseu
+                dist[v] = dist[u] + graph[u][v];
+            }
+        }
+    }
+
+    // Afisare rezultate fix pe formatul cerut in exercitiu
+    printf("Ruta: %s", orase[src]);
+    printPath(parent, dest);
+    printf("\nKm parcursi in total: %d km\n\n", dist[dest]);
+}
+
+int main() {
+    int graph[V][V] = {0}; // Matricea de adiacenta plina cu 0 initial
+
+    // --- Incarcam harta cu distantele reale din imagine (graf neorientat) ---
+    graph[0][1] = graph[1][0] = 319; // Timisoara - Cluj-Napoca
+    graph[0][2] = graph[2][0] = 271; // Timisoara - Sibiu
+    graph[0][3] = graph[3][0] = 336; // Timisoara - Craiova
+    graph[0][4] = graph[4][0] = 550; // Timisoara - Bucuresti
+    
+    graph[1][2] = graph[2][1] = 176; // Cluj-Napoca - Sibiu
+    graph[1][6] = graph[6][1] = 480; // Cluj-Napoca - Iasi
+    
+    graph[2][5] = graph[5][2] = 120; // Sibiu - Brasov
+    graph[2][4] = graph[4][2] = 300; // Sibiu - Bucuresti
+    graph[2][6] = graph[6][2] = 460; // Sibiu - Iasi
+    
+    graph[3][4] = graph[4][3] = 235; // Craiova - Bucuresti
+    
+    graph[4][5] = graph[5][4] = 170; // Bucuresti - Brasov
+    graph[4][7] = graph[7][4] = 250; // Bucuresti - Constanta
+    
+    graph[5][6] = graph[6][5] = 300; // Brasov - Iasi
+    graph[5][7] = graph[7][5] = 200; // Brasov - Constanta
+    
+    graph[6][7] = graph[7][6] = 400; // Iasi - Constanta
+
+    // --- Executam cele 3 cerinte din Exercițiul Extra ---
+    printf("1. X: Timisoara, Y: Constanta\n");
+    dijkstra(graph, 0, 7); // De la 0(Timisoara) la 7(Constanta)
+
+    printf("2. X: Craiova, Y: Iasi\n");
+    dijkstra(graph, 3, 6); // De la 3(Craiova) la 6(Iasi)
+
+    printf("3. X: Constanta, Y: Cluj-Napoca\n");
+    dijkstra(graph, 7, 1); // De la 7(Constanta) la 1(Cluj-Napoca)
+
+    return 0;
+}
